@@ -1,0 +1,1 @@
+# authentication-scantum-nuxt3
