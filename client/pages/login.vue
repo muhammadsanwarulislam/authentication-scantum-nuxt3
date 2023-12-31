@@ -1,44 +1,67 @@
 <script lang="ts" setup>
-import { useAuthStore } from "~/stores/useAuthStore";
-import { definePageMeta } from "#imports";
-
 definePageMeta({
-  middleware: ["guest"],
+    middleware: ["guest"],
 });
 
-const form = ref({
-  email: "test@example.com",
-  password: "password",
+interface Credentials {
+    username: string;
+    password: string;
+}
+
+const { login } = useAuth();
+const config = useRuntimeConfig();
+const router = useRouter();
+
+const credentials: Credentials = reactive({
+    username: "",
+    password: "",
 });
 
-const auth = useAuthStore();
+const error = ref<string>("");
 
-async function handleLogin() {
-  if (auth.isLoggedIn) {
-    return navigateTo("/");
-  }
+async function submit() {
+    try {
+        error.value = "";
 
-  const { error } = await auth.login(form.value);
-
-  if (!error.value) {
-    return navigateTo("/");
-  }
+        await login(credentials.username, credentials.password, true);
+        router.push(config.public.homeUrl);
+    } catch (err) {
+        error.value = err as string;
+    }
 }
 </script>
 
 <template>
-  <form @submit.prevent="handleLogin">
-    <label>
-      Email
-      <input v-model="form.email" type="email" />
-    </label>
-    <label>
-      Password
-      <input v-model="form.password" type="password" />
-    </label>
+    <div>
+        <p>Page: login</p>
 
-    <button>Login</button>
-  </form>
+        <form @submit.prevent="submit">
+            <small>{{ error }}</small>
+
+            <input
+                id="username"
+                v-model="credentials.username"
+                type="text"
+                name="username"
+                placeholder="Your username"
+                autocomplete="off"
+            />
+            <input
+                id="password"
+                v-model="credentials.password"
+                type="password"
+                name="password"
+                placeholder="Your password"
+                autocomplete="off"
+            />
+
+            <button type="submit">Login</button>
+        </form>
+
+        <NuxtLink to="/register" class="text-blue-500"> Register </NuxtLink>
+
+        <NuxtLink to="/password-reset" class="text-blue-500">
+            Forgot password
+        </NuxtLink>
+    </div>
 </template>
-
-<style scoped></style>

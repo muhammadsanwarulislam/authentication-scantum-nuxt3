@@ -1,9 +1,9 @@
 <script lang="ts" setup></script>
 
 <template>
-  <div>
-    Page: foo
-  </div>
+    <div>Page: index</div>
+
+    <ApplicationInfo />
 </template>
 
 <style scoped></style>
