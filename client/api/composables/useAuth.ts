@@ -1,8 +1,8 @@
 export const useAuth = () => {
-    const router = useRouter();
-    const config = useRuntimeConfig();
-    const { authentication } = useApi();
-    const user = useUser();
+    const router                = useRouter();
+    const config                = useRuntimeConfig();
+    const { authentication }    = useApi();
+    const user                  = useUser();
 
     const isAuthenticated = computed(() => user.value !== null);
 

@@ -1,20 +1,20 @@
 <script lang="ts" setup>
 definePageMeta({
-    middleware: ["guest"],
+  middleware: ["guest"],
 });
 
 interface Credentials {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 const { login } = useAuth();
-const config = useRuntimeConfig();
-const router = useRouter();
+const config    = useRuntimeConfig();
+const router    = useRouter();
 
 const credentials: Credentials = reactive({
-    username: "",
-    password: "",
+  username: "test@example.com",
+  password: "password",
 });
 
 const error = ref<string>("");
@@ -22,7 +22,6 @@ const error = ref<string>("");
 async function submit() {
     try {
         error.value = "";
-
         await login(credentials.username, credentials.password, true);
         router.push(config.public.homeUrl);
     } catch (err) {
@@ -32,36 +31,53 @@ async function submit() {
 </script>
 
 <template>
-    <div>
-        <p>Page: login</p>
+  <AuthCard>
 
-        <form @submit.prevent="submit">
-            <small>{{ error }}</small>
+    <template #logo>
+      <NuxtLink to="/">
+        <ApplicationLogo class="w-20 h-20 fill-current text-gray-500" />
+      </NuxtLink>
+    </template>
 
-            <input
-                id="username"
-                v-model="credentials.username"
-                type="text"
-                name="username"
-                placeholder="Your username"
-                autocomplete="off"
-            />
-            <input
-                id="password"
-                v-model="credentials.password"
-                type="password"
-                name="password"
-                placeholder="Your password"
-                autocomplete="off"
-            />
+    <form @submit.prevent="submit">
+      <small>{{ error }}</small>
 
-            <button type="submit">Login</button>
-        </form>
+      <!-- Email Address -->
+      <div>
+        <Label for="email">Email</Label>
+        <Input
+          id="username"
+          type="email"
+          class="block mt-1 w-full"
+          v-model="credentials.username"
+          required
+          autoFocus
+        />
+      </div>
 
-        <NuxtLink to="/register" class="text-blue-500"> Register </NuxtLink>
+      <!-- Password -->
+      <div class="mt-4">
+        <Label for="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          class="block mt-1 w-full"
+          v-model="credentials.password"
+          required
+          autoComplete="current-password"
+        />
+      </div>
 
-        <NuxtLink to="/password-reset" class="text-blue-500">
-            Forgot password
+      <div class="flex items-center justify-end mt-4">
+        <Button class="ml-3" :disabled="inProgress">Login</Button>
+        <NuxtLink
+          to="/password-reset"
+          class="ml-2 underline text-sm text-gray-600 hover:text-gray-900"
+        >
+          Forgot password
         </NuxtLink>
-    </div>
+      </div>
+    </form>
+  </AuthCard>
 </template>
+
